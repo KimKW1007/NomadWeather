@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -9,6 +9,7 @@ const API_KEY = 'b6d63069ea5f7e32f85903eb161ce011';
 const App = () => {
   const [city, setCity] = useState('Loading...');
   const [days, setDays] = useState([]);
+  const [moreDays, setMoreDays] = useState([]);
   const [ok, setOk] = useState(true);
   const ask = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
@@ -22,12 +23,10 @@ const App = () => {
     if (location[0].region) setCity(location[0].region);
     const json = await (await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`)).json();
     if (json) {
-      const date = new Date();
       const todayData = json.list.filter((v : any, i : number) => i < 8);
-      const moreDayData = json.list.filter(({dt_txt} : {dt_txt :string}) => dt_txt.includes("00:00:00")).slice(1,3);
-      const currentDays = [todayData, moreDayData].flat()
-      setDays([]);
-      console.log(date)
+      const moreDayData = json.list.filter(({dt_txt} : {dt_txt :string}) => dt_txt.includes("15:00:00")).slice(0,2);
+      /* setDays(todayData);
+      setMoreDays(moreDayData); */
     }
   };
   useEffect(() => {
@@ -39,26 +38,7 @@ const App = () => {
         <Text style={styles.cityName}>{city}</Text>
       </View>
       <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.weather}>
-        <View style={styles.day}>
-          <Text style={styles.temp}>27</Text>
-          <Text style={styles.description}>Sunny</Text>
-        </View>
-        <View style={styles.day}>
-          <Text style={styles.temp}>27</Text>
-          <Text style={styles.description}>Sunny</Text>
-        </View>
-        <View style={styles.day}>
-          <Text style={styles.temp}>27</Text>
-          <Text style={styles.description}>Sunny</Text>
-        </View>
-        <View style={styles.day}>
-          <Text style={styles.temp}>27</Text>
-          <Text style={styles.description}>Sunny</Text>
-        </View>
-        <View style={styles.day}>
-          <Text style={styles.temp}>27</Text>
-          <Text style={styles.description}>Sunny</Text>
-        </View>
+        {days.length <= 0 ? <View style={styles.day}><ActivityIndicator color='white' style={{marginTop : 10}} size="large"/></View> :  <View style={styles.day}></View>}
       </ScrollView>
     </View>
   );
