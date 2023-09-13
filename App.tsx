@@ -22,10 +22,12 @@ const App = () => {
     } = await Location.getCurrentPositionAsync({ accuracy: 5 });
     const location = await Location.reverseGeocodeAsync({ latitude, longitude }, { useGoogleMaps: false });
     if (location[0].region) setCity(location[0].region);
-    const json = await (await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`)).json();
-    if (json) {
-      const todayData = json.list.filter((v: any, i: number) => i < 8);
-      setDays(todayData);
+    if(latitude && longitude){
+      const json = await (await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`)).json();
+      if (json) {
+        const todayData = json.list.filter((v: any, i: number) => i < 8);
+        setDays(todayData);
+      }
     }
   };
   useEffect(() => {
