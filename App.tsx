@@ -6,7 +6,7 @@ import DayItem from './DayItem';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const API_KEY = 'b6d63069ea5f7e32f85903eb161ce011';
+const API_KEY = process.env.API_KEY;
 
 const App = () => {
   const [city, setCity] = useState('Loading...');
